@@ -1,3 +1,10 @@
+/**
+ * --------------------------------------------------------------------------
+ * Bootstrap (v5.0.0-beta2): util/backdrop.js
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * --------------------------------------------------------------------------
+ */
+
 import EventHandler from '../dom/event-handler'
 import { execute, getTransitionDurationFromElement, promiseTimeout, reflow } from './index'
 
@@ -8,10 +15,7 @@ const CLASS_NAME_SHOW = 'show'
 const EVENT_MOUSEDOWN = 'mousedown.bs.backdrop'
 
 class Backdrop {
-  constructor(
-    isVisible = true,
-    isAnimated = false
-  ) {
+  constructor(isVisible = true, isAnimated = false) {
     this._isVisible = isVisible
     this._isAnimated = isAnimated
     this._isAppended = false
@@ -51,6 +55,7 @@ class Backdrop {
 
   hide(callback) {
     EventHandler.off(this._get(), EVENT_MOUSEDOWN)
+
     if (!this._isVisible) {
       execute(callback)
       return
@@ -77,6 +82,7 @@ class Backdrop {
     }
 
     document.body.appendChild(this._get())
+
     EventHandler.on(this._get(), EVENT_MOUSEDOWN, () => {
       execute(this._clickCallback)
     })
