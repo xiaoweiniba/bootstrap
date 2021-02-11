@@ -10,8 +10,8 @@ import {
   emulateTransitionEnd,
   getElementFromSelector,
   getTransitionDurationFromElement,
-  isRTL,
   isVisible,
+  isRTL,
   reflow,
   typeCheckConfig
 } from './util/index'
@@ -84,7 +84,6 @@ class Modal extends BaseComponent {
 
     this._config = this._getConfig(config)
     this._dialog = SelectorEngine.findOne(SELECTOR_DIALOG, this._element)
-    this._backdrop = null
     this._isShown = false
     this._isBodyOverflowing = false
     this._ignoreBackdropClick = false
@@ -218,13 +217,13 @@ class Modal extends BaseComponent {
     this._adjustDialog()
   }
 
+  // Private
+
   _initializeBackDrop() {
     const isAnimated = this._isAnimated()
 
     return new Backdrop((this._config.backdrop), isAnimated)
   }
-
-  // Private
 
   _getConfig(config) {
     config = {
