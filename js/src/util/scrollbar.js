@@ -49,7 +49,7 @@ const reset = () => {
 const _resetElementAttributes = (selector, styleProp) => {
   SelectorEngine.find(selector).forEach(element => {
     const value = Manipulator.getDataAttribute(element, styleProp)
-    if (typeof value === 'undefined' && element === document.body) {
+    if (typeof value === 'undefined') {
       element.style.removeProperty(styleProp)
     } else {
       Manipulator.removeDataAttribute(element, styleProp)
