@@ -1,29 +1,36 @@
 /**
  * --------------------------------------------------------------------------
- * Bootstrap (v5.0.0-beta2): util/backdrop.js
+ * Bootstrap (v5.0.0-beta3): util/backdrop.js
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * --------------------------------------------------------------------------
  */
 
 import EventHandler from '../dom/event-handler'
-import { execute, getTransitionDurationFromElement, reflow } from './index'
+import { execute, getTransitionDurationFromElement, reflow, typeCheckConfig } from './index'
 
+const Default = {
+  isVisible: true, // if false, we use the backdrop helper without adding any element to the dom
+  isAnimated: false,
+  parentElem: document.body
+}
+
+const DefaultType = {
+  isVisible: 'boolean',
+  isAnimated: 'boolean',
+  parentElem: 'element'
+}
+const NAME = 'backdrop'
 const CLASS_NAME_BACKDROP = 'modal-backdrop'
 const CLASS_NAME_FADE = 'fade'
 const CLASS_NAME_SHOW = 'show'
 
-const EVENT_MOUSEDOWN = 'mousedown.bs.backdrop'
+const EVENT_MOUSEDOWN = `mousedown.bs.${NAME}`
 
 class Backdrop {
-  constructor(isVisible = true, isAnimated = false) {
-    this._isVisible = isVisible
-    this._isAnimated = isAnimated
+  constructor(config) {
+    this._config = this._getConfig(config)
     this._isAppended = false
-    this._elem = this._createElement()
-  }
-
-  _get() {
-    return this._elem
+    this._element = null
   }
 
   onClick(callback) {
@@ -31,18 +38,18 @@ class Backdrop {
   }
 
   show(callback) {
-    if (!this._isVisible) {
+    if (!this._config.isVisible) {
       execute(callback)
       return
     }
 
-    if (this._isAnimated) {
+    if (this._config.isAnimated) {
       this._get().classList.add(CLASS_NAME_FADE)
     }
 
     this._append()
 
-    if (this._isAnimated) {
+    if (this._config.isAnimated) {
       reflow(this._get())
     }
 
@@ -56,7 +63,7 @@ class Backdrop {
   hide(callback) {
     EventHandler.off(this._get(), EVENT_MOUSEDOWN)
 
-    if (!this._isVisible) {
+    if (!this._config.isVisible) {
       execute(callback)
       return
     }
@@ -64,16 +71,30 @@ class Backdrop {
     this._get().classList.remove(CLASS_NAME_SHOW)
 
     this._emulateAnimation(() => {
-      this._remove()
+      this.dispose()
       execute(callback)
     })
   }
 
-  _createElement() {
-    const backdrop = document.createElement('div')
-    backdrop.className = CLASS_NAME_BACKDROP
+  // Private
 
-    return backdrop
+  _get() {
+    if (!this._element) {
+      const backdrop = document.createElement('div')
+      backdrop.className = CLASS_NAME_BACKDROP
+      this._element = backdrop
+    }
+
+    return this._element
+  }
+
+  _getConfig(config) {
+    config = {
+      ...Default,
+      ...(typeof config === 'object' ? config : {})
+    }
+    typeCheckConfig(NAME, config, DefaultType)
+    return config
   }
 
   _append() {
@@ -81,7 +102,7 @@ class Backdrop {
       return
     }
 
-    document.body.appendChild(this._get())
+    this._config.parentElem.appendChild(this._get())
 
     EventHandler.on(this._get(), EVENT_MOUSEDOWN, () => {
       execute(this._clickCallback)
@@ -90,7 +111,8 @@ class Backdrop {
     this._isAppended = true
   }
 
-  _remove() {
+  dispose() {
+    EventHandler.off(this._get(), EVENT_MOUSEDOWN)
     if (!this._isAppended) {
       return
     }
@@ -100,13 +122,13 @@ class Backdrop {
   }
 
   _emulateAnimation(callback) {
-    if (!this._isAnimated) {
+    if (!this._config.isAnimated) {
       execute(callback)
       return
     }
 
     const backdropTransitionDuration = getTransitionDurationFromElement(this._get())
-    setTimeout(() => execute(callback), backdropTransitionDuration + 5)
+    setTimeout(() => execute(callback), backdropTransitionDuration)
   }
 }
 

@@ -16,7 +16,10 @@ describe('Backdrop', () => {
 
   describe('show', () => {
     it('if it is "shown", should append the backdrop html once, on show, and contain "show" class', done => {
-      const instance = new Backdrop(true, false)
+      const instance = new Backdrop({
+        isVisible: true,
+        isAnimated: false
+      })
       const elems = () => document.querySelectorAll(CLASS_BACKDROP)
 
       expect(elems().length).toEqual(0)
@@ -32,7 +35,10 @@ describe('Backdrop', () => {
     })
 
     it('if it is not "shown", should not append the backdrop html', done => {
-      const instance = new Backdrop(false, true)
+      const instance = new Backdrop({
+        isVisible: false,
+        isAnimated: true
+      })
       const elems = () => document.querySelectorAll(CLASS_BACKDROP)
 
       expect(elems().length).toEqual(0)
@@ -43,7 +49,10 @@ describe('Backdrop', () => {
     })
 
     it('if it is "shown" and "animated", should append the backdrop html once, and contain "fade" class', done => {
-      const instance = new Backdrop(true, true)
+      const instance = new Backdrop({
+        isVisible: true,
+        isAnimated: true
+      })
       const elems = () => document.querySelectorAll(CLASS_BACKDROP)
 
       expect(elems().length).toEqual(0)
@@ -60,7 +69,10 @@ describe('Backdrop', () => {
 
   describe('hide', () => {
     it('should remove the backdrop html', done => {
-      const instance = new Backdrop(true, true)
+      const instance = new Backdrop({
+        isVisible: true,
+        isAnimated: true
+      })
 
       const elems = () => document.body.querySelectorAll(CLASS_BACKDROP)
 
@@ -75,8 +87,11 @@ describe('Backdrop', () => {
     })
 
     it('should remove "show" class', done => {
-      const instance = new Backdrop(true, true)
-      const elem = instance._elem
+      const instance = new Backdrop({
+        isVisible: true,
+        isAnimated: true
+      })
+      const elem = instance._get()
 
       instance.show()
       instance.hide(() => {
@@ -87,9 +102,12 @@ describe('Backdrop', () => {
   })
 
   it('if it is not "shown", should not try to remove Node on remove method', done => {
-    const instance = new Backdrop(false, true)
+    const instance = new Backdrop({
+      isVisible: false,
+      isAnimated: true
+    })
     const elems = () => document.querySelectorAll(CLASS_BACKDROP)
-    const spy = spyOn(instance, '_remove').and.callThrough()
+    const spy = spyOn(instance, 'dispose').and.callThrough()
 
     expect(elems().length).toEqual(0)
     expect(instance._isAppended).toEqual(false)
@@ -107,7 +125,10 @@ describe('Backdrop', () => {
     it('it should execute callback on click', done => {
       const spy = jasmine.createSpy('spy')
 
-      const instance = new Backdrop(true, false)
+      const instance = new Backdrop({
+        isVisible: true,
+        isAnimated: false
+      })
       instance.onClick(() => spy())
       const endTest = () => {
         setTimeout(() => {
@@ -127,7 +148,10 @@ describe('Backdrop', () => {
 
   describe('animation callbacks', () => {
     it('if it is animated, should show and hide backdrop after counting transition duration', done => {
-      const instance = new Backdrop(true, true)
+      const instance = new Backdrop({
+        isVisible: true,
+        isAnimated: true
+      })
       const spy2 = jasmine.createSpy('spy2')
 
       const execDone = () => {
@@ -147,7 +171,10 @@ describe('Backdrop', () => {
 
     it('if it is not animated, should show and hide backdrop without delay', done => {
       const spy = jasmine.createSpy('spy', getTransitionDurationFromElement)
-      const instance = new Backdrop(true, false)
+      const instance = new Backdrop({
+        isVisible: true,
+        isAnimated: false
+      })
       const spy2 = jasmine.createSpy('spy2')
 
       instance.show(spy2)
@@ -161,7 +188,10 @@ describe('Backdrop', () => {
     })
 
     it('if it is not "shown", should not call delay callbacks', done => {
-      const instance = new Backdrop(false, true)
+      const instance = new Backdrop({
+        isVisible: false,
+        isAnimated: true
+      })
       const spy = jasmine.createSpy('spy', getTransitionDurationFromElement)
 
       instance.show()

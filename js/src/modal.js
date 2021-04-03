@@ -84,12 +84,12 @@ class Modal extends BaseComponent {
 
     this._config = this._getConfig(config)
     this._dialog = SelectorEngine.findOne(SELECTOR_DIALOG, this._element)
+    this._backdrop = this._initializeBackDrop()
     this._isShown = false
     this._isBodyOverflowing = false
     this._ignoreBackdropClick = false
     this._isTransitioning = false
     this._scrollbarWidth = 0
-    this._backdrop = this._initializeBackDrop()
   }
 
   // Getters
@@ -205,6 +205,7 @@ class Modal extends BaseComponent {
 
     this._config = null
     this._dialog = null
+    this._backdrop.dispose()
     this._backdrop = null
     this._isShown = null
     this._isBodyOverflowing = null
@@ -220,9 +221,10 @@ class Modal extends BaseComponent {
   // Private
 
   _initializeBackDrop() {
-    const isAnimated = this._isAnimated()
-
-    return new Backdrop((this._config.backdrop), isAnimated)
+    return new Backdrop({
+      isVisible: Boolean(this._config.backdrop),
+      isAnimated: this._isAnimated()
+    })
   }
 
   _getConfig(config) {
