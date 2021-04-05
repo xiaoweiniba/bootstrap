@@ -76,7 +76,7 @@ class ScrollSpy extends BaseComponent {
     this._activeTarget = null
     this._scrollHeight = 0
 
-    EventHandler.on(this._scrollElement, EVENT_SCROLL, () => this._process())
+    EventHandler.on(this._element, EVENT_SCROLL, () => this._process())
 
     this.refresh()
     this._process()
@@ -262,7 +262,7 @@ class ScrollSpy extends BaseComponent {
         })
     }
 
-    EventHandler.trigger(this._scrollElement, EVENT_ACTIVATE, {
+    EventHandler.trigger(this._element, EVENT_ACTIVATE, {
       relatedTarget: target
     })
   }
